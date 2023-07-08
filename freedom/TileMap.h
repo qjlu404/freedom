@@ -1,4 +1,7 @@
 #pragma once
+#ifndef SFML_STATIC
+#define SFML_STATIC
+#endif // !SFML_STATIC
 #include <string>
 #include <fstream>
 #include <iostream>

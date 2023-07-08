@@ -1,4 +1,8 @@
 #pragma once
+#ifndef SFML_STATIC
+#define SFML_STATIC
+#endif // !SFML_STATIC
+
 #include <SFML/Graphics.hpp>
 #include "Boundary.h"
 class Ray : public sf::Drawable
