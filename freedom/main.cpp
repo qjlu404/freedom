@@ -62,8 +62,8 @@ int main()
     std::vector<Boundary> Boundaries = {boundary, boundary1, boundary2, boundary3};
 
     Ray ray1(sf::Vector2f(200, 200), 90);
-    size_t centralRay = 5;
-    int fovMultiplier = 4; // <- markiplier
+    size_t centralRay = 11;
+    int fovMultiplier = 1; // <- markiplier
     if (!(centralRay % 2)) 
         centralRay++;
     std::vector<Ray> rays;
