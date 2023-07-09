@@ -20,9 +20,10 @@ public:
 	void SetPosition(sf::Vector2f pos);
 	sf::Vector2f GetPosition();
 	void SetAngle(float _angle);
-
+	float GetAngle();
 
 	sf::Vector2f cast(Boundary b);
+	float castDistance(Boundary b);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 

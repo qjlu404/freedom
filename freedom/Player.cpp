@@ -1,7 +1,8 @@
 #include "Player.h"
 
-Player::Player() : _pos(0, 0), _angle((float)(rand() % 359)), xComponent(0), yComponent(0)
+Player::Player() : _pos(0, 0), _angle((float)(rand() % 359)), xComponent(0), yComponent(0), energy(100)
 {
+
 }
 
 void Player::setPosition(sf::Vector2f pos)
@@ -48,13 +49,14 @@ void Player::turn(float amount)
 	_angle += amount;
 	if (_angle < 0) _angle += 360; // only if below zero, should add up to 359
 	if (_angle >= 360) _angle -= 360;
+	energy -= 0.0001f;
 }
 void Player::move(float amount)
 {
 	sf::Vector2f ratios = getTrigComponent();
 	sf::Vector2f add = ratios * amount;
-	std::cout << add.x << " " << add.y << std::endl;
 	_pos += add;
 	// trig -> geo: +270 degrees or subtract 90 degrees
+	energy -= 0.0001f;
 }
 

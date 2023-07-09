@@ -10,7 +10,7 @@
 #endif // !NOMINMAX
 #include <windows.h>
 #include "Player.h"
-#include "TileMap.h"
+#include "Raydar.h"
 #include "MainUI.h"
 #include "Boundary.h"
 #include "Ray.h"
@@ -49,11 +49,6 @@ int main()
     PlayerLine[0].color = sf::Color::Red;
     PlayerLine[1].color = sf::Color::Red;
     
-    /*TileMap tm;
-    if (tm.LoadFromFile("./resources/MapData/map1.te"))
-    {
-        return 0;
-    }*/
 
     Boundary boundary(sf::Vector2f(400, 50), sf::Vector2f(500, 250));
     Boundary boundary1(sf::Vector2f(400, 50), sf::Vector2f(200, 100));
@@ -61,22 +56,19 @@ int main()
     Boundary boundary3(sf::Vector2f(250, 200), sf::Vector2f(500, 250));
     std::vector<Boundary> Boundaries = {boundary, boundary1, boundary2, boundary3};
 
-    Ray ray1(sf::Vector2f(200, 200), 90);
-    size_t centralRay = 11;
-    int fovMultiplier = 1; // <- markiplier
-    if (!(centralRay % 2)) 
-        centralRay++;
-    std::vector<Ray> rays;
-    for (int i = 0; i < centralRay * 2-1; i++)
-    {
-        rays.push_back(ray1);
-    }
+    Raydar rad(Boundaries, 7, 5);
+
+
+    //debug  
+    sf::Font mouseTextFont;
+    mouseTextFont.loadFromFile("./Resources/Fonts/sevenseg.ttf");
+    sf::Text mouseText("000", mouseTextFont, 20);
+    
     // delta time
 
     sf::Clock clock;
 
-   
-    // mainloop
+    int pingtimer = 0;
 
     while (mainWindow.isOpen())
     {
@@ -157,82 +149,81 @@ int main()
         {
             view = 1;
         }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+        {
+            view = 2;
+        }
 
         // update
-        
+
         ui.onUpdate(player);
+
 
         PlayerCircle.setPosition(player.getPosition());
         PlayerLine[0].position = PlayerCircle.getPosition() + sf::Vector2f(PlayerCircle.getRadius(), PlayerCircle.getRadius());
         PlayerLine[1].position = PlayerLine[0].position + (PlayerlineRadius * player.getTrigComponent());
 
-        
-        std::vector <sf::CircleShape> endpoints;
+        rad.onUpdate(player.getAngle(), player.getPosition() + sf::Vector2f(PlayerCircle.getRadius(), PlayerCircle.getRadius()));
 
-        //Distance to Center Ray
-        int dcr = 0;
-        for (size_t i = 0; i < rays.size(); i++)
+        if (pingtimer > 0)
         {
-            
-            dcr = (int)i - (int)centralRay+1;
-            rays[i].SetAngle(player.getAngle() + dcr * fovMultiplier);
-
-
-            rays[i].SetPosition(player.getPosition() + sf::Vector2f(PlayerCircle.getRadius(), PlayerCircle.getRadius()));
-            
-            sf::CircleShape shape(3.f);
-            shape.setFillColor(sf::Color::White);
-            for (size_t j = 0; j < Boundaries.size(); j++)
-            {
-                sf::Vector2f iPosition = rays[i].cast(Boundaries[j]);
-                if (iPosition.x == NAN || iPosition.y == NAN)
-                {
-                    continue;
-                }
-                shape.setPosition(iPosition - sf::Vector2f(shape.getRadius(), shape.getRadius()));
-                endpoints.push_back(shape);
-            }
-            /*
-            for (size_t j = 0; j < tm.tiles.size(); j++)
-            {
-                for (size_t k = 0; k < tm.tiles[j].size(); k++)
-                {
-                    for (int l = 0; l < 4; l++)
-                    {
-                        rays[i].cast(tm.tiles[j][k].bounds[l]);
-                    }
-                }
-            }*/
+            rad.ping();
+            pingtimer = 0;
         }
-
+        else pingtimer++;
         // render
-
+        std::stringstream ss;
+        ss << sf::Mouse::getPosition(mainWindow).x << "," << sf::Mouse::getPosition(mainWindow).y;
+        mouseText.setString(ss.str());
+        mouseText.setPosition((sf::Vector2f)sf::Mouse::getPosition(mainWindow));
         mainWindow.clear();
         //mainWindow.setView(view);
         if (view == 0)
         {
             mainWindow.setView(sf::View((sf::FloatRect)ui.primaryUI.getTextureRect()));
             mainWindow.draw(ui);
-        }
-        if (view == 1)
-        {
-            mainWindow.setView(mainWindow.getDefaultView());/*
-            mainWindow.draw(tm);*/
-
+            mainWindow.setView(rad.RaydarView);
+            mainWindow.draw(rad);
             mainWindow.draw(PlayerCircle);
             mainWindow.draw(PlayerLine, 2, sf::Lines);
 
-            mainWindow.draw(boundary);
-            mainWindow.draw(boundary1);
-            mainWindow.draw(boundary2);
-            mainWindow.draw(boundary3);
-            for (size_t i = 0; i < rays.size(); i++)
+            for (size_t i = 0; i < Boundaries.size(); i++)
             {
-                mainWindow.draw(rays[i]);
+                mainWindow.draw(Boundaries[i]);
             }
-            for (size_t i = 0; i < endpoints.size(); i++)
+            mainWindow.draw(mouseText);
+        }
+        if (view == 1)
+        {
+            mainWindow.setView(rad.RaydarView);
+            mainWindow.draw(rad);
+            mainWindow.draw(PlayerCircle);
+            mainWindow.draw(PlayerLine, 2, sf::Lines);
+
+            for (size_t i = 0; i < Boundaries.size(); i++)
             {
-                mainWindow.draw(endpoints[i]);
+                mainWindow.draw(Boundaries[i]);
+            }
+
+            mainWindow.draw(mouseText);
+        }
+        if (view == 2)
+        {
+            rad.RaydarView.setSize(200, 200); // left, top, width, height
+            rad.RaydarView.setViewport(sf::FloatRect(
+                148.f / 200.f, // left
+                77.f / 150.f,  // top
+                44.f / 200.f, // width
+                66.f / 150.f  // height
+            ));
+            mainWindow.setView(rad.RaydarView);
+            mainWindow.draw(rad);
+            mainWindow.draw(PlayerCircle);
+            mainWindow.draw(PlayerLine, 2, sf::Lines);
+
+            for (size_t i = 0; i < Boundaries.size(); i++)
+            {
+                mainWindow.draw(Boundaries[i]);
             }
         }
         mainWindow.display();

@@ -19,10 +19,11 @@ public:
 	sf::Text xCoordText;
 	sf::Text yCoordText;
 
-	sf::Vector2f lineCenter;
-	float lineRadius;
+	sf::RectangleShape energyMeterRect;
 
 	sf::Vertex dialLine[2];
+	sf::Vector2f lineCenter;
+	float lineRadius;
 
 	MainUI();
 

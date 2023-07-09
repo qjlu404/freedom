@@ -11,6 +11,7 @@ class Player
 
 	float _angle;
 	float xComponent, yComponent;
+	float energy;
 public:
 	Player();
 
@@ -24,6 +25,15 @@ public:
 
 	void turn(float amount);
 	void move(float amount);
+
+	float getEnergy()
+	{
+		return energy;
+	}
+	void setEnergy(float eng)
+	{
+		energy = eng;
+	}
 
 };
 

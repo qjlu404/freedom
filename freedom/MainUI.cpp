@@ -1,6 +1,7 @@
 #include "MainUI.h"
 
-MainUI::MainUI() : lineRadius(10), lineCenter(30, 120), primaryUITexture(), primaryUI(), DisplayFont()
+MainUI::MainUI() : lineRadius(10), lineCenter(30, 120), primaryUITexture(), primaryUI(), 
+				   DisplayFont(), energyMeterRect()
 {
 
 }
@@ -12,7 +13,7 @@ int MainUI::onLoad()
 	if (!primaryUITexture.loadFromFile("./resources/bitmaps/primaryUI.bmp"))
 	{
 		std::cerr << "\nin main.cpp: int main():"
-			"primaryUI.loadFromFile(...) failed to load primaryUI.bmp" << std::endl;
+			"primaryUI.loadFromFile(...) failed to load primaryUI.png" << std::endl;
 		system("pause");
 		return 1;
 	}

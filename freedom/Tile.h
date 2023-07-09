@@ -1,3 +1,5 @@
+// Deprecated
+
 #pragma once
 #ifndef SFML_STATIC
 #define SFML_STATIC
