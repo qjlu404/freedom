@@ -1,8 +1,8 @@
 #include "Player.h"
 
-Player::Player() : _pos(0, 0), _angle((float)(rand() % 359)), xComponent(0), yComponent(0), energy(100)
+Player::Player() : _pos(0, 0), _angle(90.f), xComponent(0), yComponent(0), energy(100)
 {
-
+	energy = 100;
 }
 
 void Player::setPosition(sf::Vector2f pos)
@@ -15,6 +15,10 @@ sf::Vector2f Player::getPosition()
 	return _pos;
 }
 
+void Player::onUpdate()
+{
+	if (energy < 1) energy = 0;
+}
 
 void Player::setAngle(float angle)
 {
@@ -58,5 +62,17 @@ void Player::move(float amount)
 	_pos += add;
 	// trig -> geo: +270 degrees or subtract 90 degrees
 	energy -= 0.0001f;
+}
+void Player::strafe(float amount)
+{
+	turn(90);
+	move(amount);
+	turn(-90);
+	energy -= 0.0001f;
+}
+
+void Player::onPing()
+{
+	energy -= 0.02f;
 }
 

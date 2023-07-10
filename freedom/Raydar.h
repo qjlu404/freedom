@@ -15,28 +15,29 @@ public:
 	float fovMultiplier; // distance between rays
 	sf::Vector2f position;
 	sf::VertexArray echos;
+	sf::VertexArray echoEdge;
 	sf::View RaydarView;
 	std::vector<Ray> rays;
 	std::vector<Boundary> boundaryMap;
 	Raydar() : centralRay(3), fovMultiplier(5), mapLoaded(0), rays(), boundaryMap(),
-		position(0,0), _angle(0), RaydarView()
+		position(0, 0), _angle(0), RaydarView(), echos(), echoEdge()
 	{
 		if (!(centralRay % 2))
 			centralRay++;
 		Ray ray;
-		for (size_t i = 0; i < centralRay * 2 - 1; i++)
+		for (size_t i = 0; i < (size_t)centralRay * 2 - 1; i++)
 		{
 			rays.push_back(ray);
 		}
 	}
 	// boundarymap, centralrayindex, angle between rays 
-	Raydar(std::vector<Boundary> map, int cr, int apr) : position(0,0), centralRay(cr), fovMultiplier(apr)
+	Raydar(std::vector<Boundary> map, int cr, int apr) : position(0, 0), centralRay(cr), fovMultiplier((float)apr), echoEdge(sf::Lines)
 	{
 		if (!(centralRay % 2))
 			centralRay++;
 
 		Ray ray;
-		for (size_t i = 0; i < centralRay * 2 - 1; i++)
+		for (size_t i = 0; i < (size_t)centralRay * 2 - 1; i++)
 		{
 			rays.push_back(ray);
 		}
@@ -60,7 +61,7 @@ public:
 		sf::Vector2f TrigComponents = sf::Vector2f(cos(3.14f * (tAngle / 180)),
 			sin(3.14f * (tAngle / 180)));
 
-		RaydarView.setCenter(position + (TrigComponents * (RaydarView.getSize().y / 2.f)));
+		RaydarView.setCenter(position + (TrigComponents * (RaydarView.getSize().y / 4.f)));
 
 		sf::Vertex vtx;
 		vtx.color = sf::Color::Green;
@@ -110,15 +111,17 @@ public:
 
 
 			sf::Vertex vtx;
-			float g = std::fminf(255 / pow(record / 50, 2), 255.f);
+			float g = std::fminf(255.f / powf(record / 50, 2), 255.f);
 			if (g < 10) g = 0;
 			vtx.color = sf::Color::Color(
 				0,
-			    g,
+			    (uint8_t)g,
 				0,
-				255);
+				(uint8_t)g);
 			vtx.position = position + TrigComponents * record;
 			vertecies.append(vtx);
+			vtx.color = sf::Color::Color(0,255,0,150);
+			echoEdge.append(vtx);
 		}
 		echos = vertecies;
 	}
@@ -130,6 +133,7 @@ public:
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
+		target.draw(echoEdge, states);
 		target.draw(echos, states);
 	}
 

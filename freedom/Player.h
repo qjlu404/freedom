@@ -18,6 +18,8 @@ public:
 	void setPosition(sf::Vector2f pos);
 	sf::Vector2f getPosition();
 
+	void onUpdate();
+
 	void setAngle(float angle);
 	float getAngle();
 
@@ -25,7 +27,7 @@ public:
 
 	void turn(float amount);
 	void move(float amount);
-
+	void strafe(float amount);
 	float getEnergy()
 	{
 		return energy;
@@ -34,6 +36,8 @@ public:
 	{
 		energy = eng;
 	}
+
+	void onPing();
 
 };
 

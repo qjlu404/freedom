@@ -46,8 +46,8 @@ int main()
         sf::Vertex(PlayerCircle.getPosition()), // center
         sf::Vertex(sf::Vector2f(PlayerCircle.getPosition() + sf::Vector2f(0,PlayerlineRadius))) // radius
     };
-    PlayerLine[0].color = sf::Color::Red;
-    PlayerLine[1].color = sf::Color::Red;
+    PlayerLine[0].color = sf::Color::Green;
+    PlayerLine[1].color = sf::Color::Green;
     
 
     Boundary boundary(sf::Vector2f(400, 50), sf::Vector2f(500, 250));
@@ -56,24 +56,16 @@ int main()
     Boundary boundary3(sf::Vector2f(250, 200), sf::Vector2f(500, 250));
     std::vector<Boundary> Boundaries = {boundary, boundary1, boundary2, boundary3};
 
-    Raydar rad(Boundaries, 7, 5);
-
-
-    //debug  
-    sf::Font mouseTextFont;
-    mouseTextFont.loadFromFile("./Resources/Fonts/sevenseg.ttf");
-    sf::Text mouseText("000", mouseTextFont, 20);
+    // map, center ray index, degrees between rays
+    Raydar rad(Boundaries, 7, 10);
     
     // delta time
 
     sf::Clock clock;
-
-    int pingtimer = 0;
-
     while (mainWindow.isOpen())
     {
 
-        sf::Int32 dt = clock.restart().asMilliseconds();
+        sf::Int32 dt = clock.restart().asMilliseconds() * 2;
 
 
         // Events
@@ -86,6 +78,16 @@ int main()
             if (event.type == sf::Event::Resized)
             {
             }
+            if (event.type == sf::Event::KeyPressed)
+            {
+                switch (event.key.code)
+                {
+                case sf::Keyboard::P:
+                    player.onPing();
+                    rad.ping();
+                    break;
+                }
+            }
         }
 
         sf::sleep(sf::milliseconds(32));
@@ -93,13 +95,13 @@ int main()
 
         // movement and rotation
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
         {
             if (Va <= 0.02f)
                 Va += 0.01f;
             player.turn(Va * dt);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
         {
             if (Va >= -0.02)
                 Va -= 0.01f;
@@ -123,7 +125,7 @@ int main()
                 V += 0.01f;
             player.move(V * dt);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
         {
             if (V >= -0.02)
                 V += -0.01f;
@@ -141,90 +143,59 @@ int main()
             player.move(V * dt);
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         {
-            view = 0;
+            if (V <= 0.02)
+                V += 0.01f;
+            player.strafe(V * dt);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::O))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         {
-            view = 1;
+            if (V >= -0.02)
+                V += -0.01f;
+            player.strafe(V * dt);
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+        else if (abs(V) > 0)
         {
-            view = 2;
+            if (abs(V) < 0.01)
+                V = 0;
+            else if (V < 0)
+                V += 0.01f;
+            else if (V > 0)
+                V -= 0.01f;
+
+            player.strafe(V * dt);
         }
 
         // update
-
+        player.onUpdate();
         ui.onUpdate(player);
 
 
         PlayerCircle.setPosition(player.getPosition());
+
         PlayerLine[0].position = PlayerCircle.getPosition() + sf::Vector2f(PlayerCircle.getRadius(), PlayerCircle.getRadius());
-        PlayerLine[1].position = PlayerLine[0].position + (PlayerlineRadius * player.getTrigComponent());
+        PlayerLine[1].position = PlayerLine[0].position + (player.getTrigComponent() * (float)dt);
 
         rad.onUpdate(player.getAngle(), player.getPosition() + sf::Vector2f(PlayerCircle.getRadius(), PlayerCircle.getRadius()));
-
-        if (pingtimer > 0)
-        {
-            rad.ping();
-            pingtimer = 0;
-        }
-        else pingtimer++;
+        
         // render
-        std::stringstream ss;
-        ss << sf::Mouse::getPosition(mainWindow).x << "," << sf::Mouse::getPosition(mainWindow).y;
-        mouseText.setString(ss.str());
-        mouseText.setPosition((sf::Vector2f)sf::Mouse::getPosition(mainWindow));
         mainWindow.clear();
-        //mainWindow.setView(view);
         if (view == 0)
         {
             mainWindow.setView(sf::View((sf::FloatRect)ui.primaryUI.getTextureRect()));
             mainWindow.draw(ui);
-            mainWindow.setView(rad.RaydarView);
-            mainWindow.draw(rad);
-            mainWindow.draw(PlayerCircle);
-            mainWindow.draw(PlayerLine, 2, sf::Lines);
-
-            for (size_t i = 0; i < Boundaries.size(); i++)
-            {
-                mainWindow.draw(Boundaries[i]);
-            }
-            mainWindow.draw(mouseText);
-        }
-        if (view == 1)
-        {
-            mainWindow.setView(rad.RaydarView);
-            mainWindow.draw(rad);
-            mainWindow.draw(PlayerCircle);
-            mainWindow.draw(PlayerLine, 2, sf::Lines);
-
-            for (size_t i = 0; i < Boundaries.size(); i++)
-            {
-                mainWindow.draw(Boundaries[i]);
-            }
-
-            mainWindow.draw(mouseText);
-        }
-        if (view == 2)
-        {
             rad.RaydarView.setSize(200, 200); // left, top, width, height
             rad.RaydarView.setViewport(sf::FloatRect(
                 148.f / 200.f, // left
                 77.f / 150.f,  // top
-                44.f / 200.f, // width
-                66.f / 150.f  // height
+                44.f / 200.f,  // width
+                66.f / 150.f   // height
             ));
             mainWindow.setView(rad.RaydarView);
             mainWindow.draw(rad);
-            mainWindow.draw(PlayerCircle);
+            //mainWindow.draw(PlayerCircle);
             mainWindow.draw(PlayerLine, 2, sf::Lines);
-
-            for (size_t i = 0; i < Boundaries.size(); i++)
-            {
-                mainWindow.draw(Boundaries[i]);
-            }
         }
         mainWindow.display();
 

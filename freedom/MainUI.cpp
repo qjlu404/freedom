@@ -45,6 +45,11 @@ int MainUI::onLoad()
 	dialLine[1] = sf::Vertex(sf::Vector2f(30, 120 + lineRadius));
 	dialLine[0].color = sf::Color::Red;
 	dialLine[1].color = sf::Color::Red;
+
+	energyMeterRect.setFillColor(sf::Color::Green);
+	energyMeterRect.setPosition(142, 12);
+	energyMeterRect.setSize(sf::Vector2f(17, 57));
+
 	return 0;
 }
 
@@ -89,14 +94,17 @@ void MainUI::onUpdate(Player player)
 	}
 	yCoordText.setString(stream.str());
 
+	energyMeterRect.setFillColor(sf::Color::Color(0,255*player.getEnergy(),0,255));
+
 }
 
 void MainUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(primaryUI, states);
 	target.draw(dialLine, 2, sf::Lines, states);
-	target.draw(degreesText);
-	target.draw(xCoordText);
-	target.draw(yCoordText);
+	target.draw(degreesText, states);
+	target.draw(xCoordText, states);
+	target.draw(yCoordText, states);
+	target.draw(energyMeterRect, states);
 }
 
