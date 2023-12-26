@@ -1,2 +1,4 @@
 # freedom
-whole idea is you're basically a dude prospecting the dead sea for valuable minerals
+Raycasting mapper project.
+WASD to move, Q and E to rotate.
+uses SFML 2.5.1
