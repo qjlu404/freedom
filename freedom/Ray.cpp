@@ -3,6 +3,7 @@
 Ray::Ray() : _position(0, 0), _TrigComponents(1, 0), _angle(0)
 {
 }
+
 Ray::Ray(sf::Vector2f pos, float angle) : _position(pos), _angle(angle)
 {
 	float tAngle = _angle + 270;
@@ -25,10 +26,12 @@ void Ray::SetPosition(sf::Vector2f pos)
 	lines[1].position = _position + sf::Vector2f(_TrigComponents.x * 10, _TrigComponents.y * 10);
 
 }
+
 sf::Vector2f Ray::GetPosition()
 {
 	return _position;
 }
+
 void Ray::SetAngle(float angle)
 {
 	_angle = angle;
@@ -42,6 +45,7 @@ void Ray::SetAngle(float angle)
 
 	lines[1].position = _position + sf::Vector2f(_TrigComponents.x * 10, _TrigComponents.y * 10);
 }
+
 float Ray::GetAngle()
 {
 	return _angle;
@@ -78,6 +82,7 @@ sf::Vector2f Ray::cast(Boundary b)
 	return ipoint;
 
 }
+
 float Ray::castDistance(Boundary b) // returns the distance
 {
 	sf::Vector2f endpoint = cast(b);
@@ -95,6 +100,7 @@ float Ray::castDistance(Boundary b) // returns the distance
 
 	return sqrtf(pow(distanceX, 2) + pow(distanceY, 2));
 }
+
 void Ray::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	sf::Vertex templines[2] =

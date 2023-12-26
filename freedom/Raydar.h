@@ -22,6 +22,8 @@ public:
 	Raydar() : centralRay(3), fovMultiplier(5), mapLoaded(0), rays(), boundaryMap(),
 		position(0, 0), _angle(0), RaydarView(), echos(), echoEdge()
 	{
+		
+
 		if (!(centralRay % 2))
 			centralRay++;
 		Ray ray;
@@ -29,10 +31,20 @@ public:
 		{
 			rays.push_back(ray);
 		}
+
+		RaydarView.setSize(200, 400);
+		RaydarView.setViewport(sf::FloatRect(
+			148.f / 200.f, // left
+			77.f / 150.f,  // top
+			44.f / 200.f,  // width
+			66.f / 150.f   // height
+		));
 	}
 	// boundarymap, centralrayindex, angle between rays 
 	Raydar(std::vector<Boundary> map, int cr, int apr) : position(0, 0), centralRay(cr), fovMultiplier((float)apr), echoEdge(sf::Lines)
 	{
+		echoEdge.resize(10000);
+
 		if (!(centralRay % 2))
 			centralRay++;
 
@@ -44,6 +56,13 @@ public:
 
 		boundaryMap = map;
 		mapLoaded = true;
+		RaydarView.setSize(200, 150);
+		RaydarView.setViewport(sf::FloatRect(
+			148.f / 200.f, // left
+			77.f / 150.f,  // top
+			44.f / 200.f,  // width
+			66.f / 150.f   // height
+		));
 		// l = 148/200 t = 77/150 r = 192/200 b = 143/150
 		//RaydarView.setViewport(sf::FloatRect(148.f / 200.f, 77.f / 150.f, 192.f / 200.f, 143.f / 150.f));
 	}
@@ -120,7 +139,7 @@ public:
 				(uint8_t)g);
 			vtx.position = position + TrigComponents * record;
 			vertecies.append(vtx);
-			vtx.color = sf::Color::Color(0,255,0,150);
+			//vtx.color = sf::Color::Color(0,255,0,150);
 			echoEdge.append(vtx);
 		}
 		echos = vertecies;

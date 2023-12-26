@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d225a1c4-b31a-4e07-b42f-3cd5f7da43f5}</ProjectGuid>
-    <RootNamespace>freedom</RootNamespace>
+    <ProjectGuid>{ff610755-1a75-4378-a554-295abaa52dd0}</ProjectGuid>
+    <RootNamespace>FreedomMapMaker</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,10 +70,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)SFML-2.6.0\include;$(IncludePath)</IncludePath>
-    <SourcePath>$(SourcePath)</SourcePath>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -108,12 +104,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)freedom\;$(SolutionDir)freedom\SFML-2.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)SFML-2.6.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)freedom\SFML-2.6.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;winmm.lib;gdi32.lib;opengl32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -134,21 +130,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Boundary.cpp" />
-    <ClCompile Include="GameMap.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainUI.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Ray.cpp" />
-    <ClCompile Include="Raydar.cpp" />
+    <ProjectReference Include="..\freedom\freedom.vcxproj">
+      <Project>{d225a1c4-b31a-4e07-b42f-3cd5f7da43f5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Boundary.h" />
-    <ClInclude Include="GameMap.h" />
-    <ClInclude Include="MainUI.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Ray.h" />
-    <ClInclude Include="Raydar.h" />
+    <ClCompile Include="..\freedom\Boundary.cpp" />
+    <ClCompile Include="..\freedom\GameMap.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\freedom\Boundary.h" />
+    <ClInclude Include="..\freedom\GameMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

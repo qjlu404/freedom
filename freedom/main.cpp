@@ -12,7 +12,7 @@
 #include "Player.h"
 #include "Raydar.h"
 #include "MainUI.h"
-#include "Boundary.h"
+#include "GameMap.h"
 #include "Ray.h"
 // const variable declaration
 static const unsigned resX = 800;
@@ -48,18 +48,15 @@ int main()
     };
     PlayerLine[0].color = sf::Color::Green;
     PlayerLine[1].color = sf::Color::Green;
-    
 
-    Boundary boundary(sf::Vector2f(400, 50), sf::Vector2f(500, 250));
-    Boundary boundary1(sf::Vector2f(400, 50), sf::Vector2f(200, 100));
-    Boundary boundary2(sf::Vector2f(200, 100), sf::Vector2f(250, 200));
-    Boundary boundary3(sf::Vector2f(250, 200), sf::Vector2f(500, 250));
-    std::vector<Boundary> Boundaries = {boundary, boundary1, boundary2, boundary3};
+    GameMap map;
+    map.loadFromFile("./map.te");
 
     // map, center ray index, degrees between rays
-    Raydar rad(Boundaries, 7, 10);
-    
-    // delta time
+    Raydar rad(map.GetMap(), 21, 1); // delta time
+    sf::View seenview;
+    seenview.setViewport(sf::FloatRect(72.f / 200.f, 12.f / 150.f, 56.f / 200.f, 56.f / 150.f));
+    seenview.setSize(2000, 2000);
 
     sf::Clock clock;
     while (mainWindow.isOpen())
@@ -83,7 +80,6 @@ int main()
                 switch (event.key.code)
                 {
                 case sf::Keyboard::P:
-                    player.onPing();
                     rad.ping();
                     break;
                 }
@@ -91,7 +87,7 @@ int main()
         }
 
         sf::sleep(sf::milliseconds(32));
-
+        rad.ping();
 
         // movement and rotation
 
@@ -175,28 +171,26 @@ int main()
         PlayerCircle.setPosition(player.getPosition());
 
         PlayerLine[0].position = PlayerCircle.getPosition() + sf::Vector2f(PlayerCircle.getRadius(), PlayerCircle.getRadius());
-        PlayerLine[1].position = PlayerLine[0].position + (player.getTrigComponent() * (float)dt);
+        PlayerLine[1].position = PlayerLine[0].position + player.getTrigComponent() * 1.1f;
 
         rad.onUpdate(player.getAngle(), player.getPosition() + sf::Vector2f(PlayerCircle.getRadius(), PlayerCircle.getRadius()));
         
         // render
         mainWindow.clear();
-        if (view == 0)
-        {
-            mainWindow.setView(sf::View((sf::FloatRect)ui.primaryUI.getTextureRect()));
-            mainWindow.draw(ui);
-            rad.RaydarView.setSize(200, 200); // left, top, width, height
-            rad.RaydarView.setViewport(sf::FloatRect(
-                148.f / 200.f, // left
-                77.f / 150.f,  // top
-                44.f / 200.f,  // width
-                66.f / 150.f   // height
-            ));
-            mainWindow.setView(rad.RaydarView);
-            mainWindow.draw(rad);
-            //mainWindow.draw(PlayerCircle);
-            mainWindow.draw(PlayerLine, 2, sf::Lines);
-        }
+        mainWindow.setView(sf::View((sf::FloatRect)ui.primaryUI.getTextureRect()));
+        mainWindow.draw(ui);
+        mainWindow.setView(rad.RaydarView);
+        mainWindow.draw(rad);
+        mainWindow.draw(PlayerCircle);
+        mainWindow.draw(PlayerLine, 2, sf::Lines);
+        // left 72 / 200,   right 128 / 200,
+        // bottom 68 / 150, top 12 / 150
+        
+        mainWindow.setView(seenview);
+
+        mainWindow.draw(rad);
+        mainWindow.draw(PlayerCircle);
+        mainWindow.draw(PlayerLine, 2, sf::Lines);
         mainWindow.display();
 
     }
