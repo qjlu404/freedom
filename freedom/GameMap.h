@@ -7,6 +7,7 @@
 #include <sstream>
 #include <SFML/System/Vector2.hpp>
 #include "Boundary.h"
+#include <math.h>
 
 // boundary map
 // boundary begin, boundary end 
@@ -23,7 +24,8 @@ public:
 	int loadFromFile(std::string name)
 	{
 		std::ifstream handle(name, std::ios::in);
-		float ax, ay, bx, by;
+		if (!handle.is_open()) return 1;
+		float ax, ay, bx, by; // boundary is the line defined by the 2 points A and B
 		while (handle >> ax >> ay >> bx >> by)
 		{
 			boundaries.push_back(Boundary(sf::Vector2f(ax, ay), sf::Vector2f(bx, by)));
@@ -32,7 +34,7 @@ public:
 		return 0;
 	}
 
-	int serialize(std::string name)
+	int Export(std::string name)
 	{
 		std::ofstream handle;
 		handle.open(name, std::ios::out);

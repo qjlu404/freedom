@@ -7,8 +7,11 @@
 
 void main()
 {
-	sf::RenderWindow mainWindow(sf::VideoMode(1280, 720), "Map Editor", sf::Style::Close);
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+	sf::RenderWindow mainWindow(sf::VideoMode(1280, 720), "Map Editor", sf::Style::Close, settings);
 	sf::View mainView(mainWindow.getDefaultView());
+	sf::Vector2f OrigionalPosition(mainView.getCenter());
 	sf::RectangleShape mouseRect;
 	mouseRect.setFillColor(sf::Color::Red);
 	mouseRect.setSize(sf::Vector2f(5, 5));
@@ -23,6 +26,8 @@ void main()
 	std::array<sf::Vector2f, 2> poses;
 	int increment = 0;
 	int firstbit = 0;
+
+	float zoomfactor = 1;
 	while (mainWindow.isOpen())
 	{
 
@@ -31,7 +36,7 @@ void main()
 		{
 			if (event.type == sf::Event::Closed)
 			{
-				if (map.serialize("./map.te")) std::cerr << "serialization error.";
+				if (map.Export("./map.te")) std::cerr << "serialization error.";
 				mainWindow.close();
 			}
 			if (event.type == sf::Event::MouseButtonReleased)
@@ -65,10 +70,12 @@ void main()
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Equal))
 		{
+			zoomfactor *= 1.003f;
 			mainView.zoom(1.003f);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Hyphen))
 		{
+			zoomfactor *= 0.997f;
 			mainView.zoom(0.997f);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -88,9 +95,16 @@ void main()
 			mainView.move(0, 0.001f * mainView.getSize().x);
 		}
 		std::stringstream fstext;
-		fstext << "Width: "  << mainView.getSize().x << "\n"
-			   << "Height: " << mainView.getSize().y << "\n"
-			   << "Increment: " << increment;
+
+		sf::Vector2f deltaPos = OrigionalPosition - mainView.getCenter();
+
+		fstext << "Width: " << mainView.getSize().x << "\n"
+			<< "Height: " << mainView.getSize().y << "\n"
+			<< "Increment: " << increment << "\n";
+
+		if (zoomfactor == 1) 
+			fstext << "Cursor x: " << mousePos.x - deltaPos.x << " y: " << mousePos.y - deltaPos.y;
+
 		frameSizeText.setString(fstext.str());
 
 		mainWindow.clear();

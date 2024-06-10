@@ -27,6 +27,7 @@ int MainUI::onLoad()
 		std::cerr << "\nin main.cpp: int main():"
 			"degreesFont.loadFromFile(...) failed to load sevenseg.ttf" << std::endl;
 		system("pause");
+		return 1;
 	}
 	degreesText = sf::Text("000", DisplayFont, 12);
 	xCoordText = sf::Text("000", DisplayFont, 12);

@@ -40,7 +40,7 @@ void Ray::SetAngle(float angle)
 	if (tAngle < 0) tAngle += 360;
 	if (tAngle >= 360) tAngle -= 360;
 	_TrigComponents = sf::Vector2f(cos(3.14f * (tAngle / 180)),
-		sin(3.14f * (tAngle / 180)));
+								   sin(3.14f * (tAngle / 180)));
 
 
 	lines[1].position = _position + sf::Vector2f(_TrigComponents.x * 10, _TrigComponents.y * 10);
@@ -56,7 +56,7 @@ sf::Vector2f Ray::cast(Boundary b)
 	sf::Vector2f v1 = b.lines[0].position;				   // x1 y1, boundary start point
 	sf::Vector2f v2 = b.lines[1].position;				   // x2 y2, boundary end point
 	sf::Vector2f v3 = _position;						   // x3 y3, ray start point
-	sf::Vector2f v4 = _position + _TrigComponents;// x4 y4, ray end point
+	sf::Vector2f v4 = _position + _TrigComponents;         // x4 y4, ray end point
 
 	float tdenom = (v1.x - v2.x) * (v3.y - v4.y) - (v1.y - v2.y) * (v3.x - v4.x);
 	if (tdenom == 0)

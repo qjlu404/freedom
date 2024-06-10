@@ -40,7 +40,7 @@ public:
 			66.f / 150.f   // height
 		));
 	}
-	// boundarymap, centralrayindex, angle between rays 
+	//     input map, center ray index (affects ray count), degrees between rays
 	Raydar(std::vector<Boundary> map, int cr, int apr) : position(0, 0), centralRay(cr), fovMultiplier((float)apr), echoEdge(sf::Lines)
 	{
 		echoEdge.resize(10000);
