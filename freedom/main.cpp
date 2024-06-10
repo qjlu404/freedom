@@ -1,4 +1,5 @@
 #include "RayGameCore.h"
+
 int main()
 {
     RayGameCore gameCore;
