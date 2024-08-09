@@ -2,15 +2,11 @@
 #define SFML_STATIC
 #include "Ray.h"
 #include <SFML/Graphics.hpp>
-// RAY Detection And Ranging
-// does the ray casting and display
-// shows a relative view of the boundaries
-// like its own program plugin
 class Raydar : public sf::Drawable
 {
 public:
-	float _angle;
-	bool mapLoaded;
+	float _angle; // central angle
+	bool mapLoaded; 
 	int centralRay; // modifies ray count
 	float fovMultiplier; // distance between rays
 	sf::Vector2f position;
@@ -41,7 +37,7 @@ public:
 		));
 	}
 	//     input map, center ray index (affects ray count), degrees between rays
-	Raydar(std::vector<Boundary> map, int cr, int apr) : position(0, 0), centralRay(cr), fovMultiplier((float)apr), echoEdge(sf::Lines)
+	Raydar(std::vector<Boundary> map, int cr, int apr) : position(0, 0), centralRay(cr), fovMultiplier((float)apr), echoEdge(sf::Lines), _angle(0)
 	{
 		echoEdge.resize(10000);
 
@@ -56,7 +52,7 @@ public:
 
 		boundaryMap = map;
 		mapLoaded = true;
-		RaydarView.setSize(200, 150);
+		RaydarView.setSize(200, 200);
 		RaydarView.setViewport(sf::FloatRect(
 			148.f / 200.f, // left
 			77.f / 150.f,  // top
@@ -130,13 +126,14 @@ public:
 
 
 			sf::Vertex vtx;
-			float g = std::fminf(255.f / powf(record / 50, 2), 255.f);
+			float g = std::fminf(255.f / sqrtf(record / 50), 255.f); // g for green, basically the brightness
 			if (g < 10) g = 0;
 			vtx.color = sf::Color::Color(
 				0,
 			    (uint8_t)g,
 				0,
-				(uint8_t)g);
+				(uint8_t)g
+			);
 			vtx.position = position + TrigComponents * record;
 			vertecies.append(vtx);
 			//vtx.color = sf::Color::Color(0,255,0,150);
@@ -147,6 +144,8 @@ public:
 	void setMap(std::vector<Boundary> map)
 	{
 		boundaryMap = map;
+		if (map.size() == 0) mapLoaded = false;
+
 		mapLoaded = true;
 	}
 

@@ -1,18 +1,11 @@
 #include "RayGameCore.h"
+#include <thread>
+#include <iostream>
 
 int main()
 {
     RayGameCore gameCore;
-    gameCore.Load();
-    sf::Clock clock;
-
-    while (gameCore.windowIsOpen())
-    {
-        sf::Int32 dt = clock.restart().asMilliseconds() * 2;
-        gameCore.windowEvents();
-        gameCore.update(dt);
-        gameCore.render();
-    }
+    gameCore.run();
     
 
     return 0;

@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player() : _pos(0, 0), _angle(90.f), xComponent(0), yComponent(0), energy(100)
+Player::Player() : _pos(0.f, 0.f), _angle(90.f), xComponent(0.f), yComponent(0.f), energy(100.f)
 {
 	energy = 100;
 }
@@ -25,12 +25,13 @@ void Player::setAngle(float angle)
 	if (angle < 0)
 	{
 		_angle = angle + 360;
+		return;
 	}
 	if (angle >= 360)
 	{
 		_angle = angle - 360;
+		return;
 	}
-	// keep it terminal
 	_angle = angle;
 }
 float Player::getAngle()
@@ -40,7 +41,7 @@ float Player::getAngle()
 
 sf::Vector2f Player::getTrigComponent()
 {
-	float tAngle = _angle + 270;
+	float tAngle = _angle + 270; // converts from computer angles to normal math angles.
 	if (tAngle < 0) tAngle += 360;
 	if (tAngle >= 360) tAngle -= 360;
 	yComponent = sin(3.14f * (tAngle / 180));
@@ -51,9 +52,8 @@ sf::Vector2f Player::getTrigComponent()
 void Player::turn(float amount)
 {
 	_angle += amount;
-	if (_angle < 0) _angle += 360; // only if below zero, should add up to 359
+	if (_angle < 0)    _angle += 360;   //for the purpose of remaining within the 0-360 degree range.
 	if (_angle >= 360) _angle -= 360;
-	energy -= 0.0001f;
 }
 void Player::move(float amount)
 {
@@ -66,7 +66,7 @@ void Player::move(float amount)
 void Player::strafe(float amount)
 {
 	turn(90);
-	move(amount);
+	move(amount); // whatever works 
 	turn(-90);
 	energy -= 0.0001f;
 }

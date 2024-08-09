@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include <thread>
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif // !NOMINMAX
@@ -36,9 +37,14 @@ class RayGameCore
 	Raydar rad;					  // (map.GetMap(), 3, 3);
 	sf::View ScannedMap;	      // The big picture map of the overall scanned shape
 	sf::Int32 _dt;     	     	  // deltuh
+	sf::RenderTexture mainTexture;
+	sf::Sprite* mainSprite;
+	std::thread renderThread;
+	std::thread windowThread;
+	std::thread logicThread;
 public:
 	RayGameCore();    // Init
-	int    Load();    // Start
+	int Load();    // Start
 	void update(sf::Int32 dt);    // giving main control of updating instead of concealing within a run loop function
 	void windowEvents(); // handle window events.
 	bool windowIsOpen()
@@ -46,6 +52,33 @@ public:
 		return mainWindow.isOpen();
 	}
 	void render();    // render
+	void asyncUpdate(sf::Int32 dt)
+	{
+			update(dt);
+	}
+	void asyncRender()
+	{
+			render();
+	}
+	void asyncEvents()
+	{
+			windowEvents();
+	}
+	void run()
+	{
+		//windowThread = std::thread(&RayGameCore::asyncEvents, this);
+		//logicThread = std::thread(&RayGameCore::asyncUpdate,this,  _dt);
+		//renderThread = std::thread(&RayGameCore::asyncRender, this);
+		while (windowIsOpen())
+		{
+			asyncEvents();
+			asyncUpdate(_dt);
+			asyncRender();
+			mainWindow.clear();
+			mainWindow.draw(*mainSprite);
+			mainWindow.display();
+		}
+	}
 
 };
 

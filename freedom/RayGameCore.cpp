@@ -1,9 +1,9 @@
 #include "RayGameCore.h"
 
 RayGameCore::RayGameCore() // constructor
-	: view(0), mainWindow(sf::VideoMode(resX, resY), "Freedom"), ui(), player(),
-	playerAngularVelocity(0), playerVelocity(0), PlayerCircle(5), PlayerlineRadius(10),
-    map(), rad(), ScannedMap(), _dt(0) 
+    : view(0), mainWindow(sf::VideoMode(resX, resY), "Freedom"), ui(), player(),
+    playerAngularVelocity(0), playerVelocity(0), PlayerCircle(5), PlayerlineRadius(10),
+    map(), rad(), ScannedMap(), _dt(0), mainTexture()
 {
     PlayerLine[0] = sf::Vertex(PlayerCircle.getPosition()); // center
     PlayerLine[1] = sf::Vertex(sf::Vector2f(PlayerCircle.getPosition() + sf::Vector2f(0, PlayerlineRadius))); // radius
@@ -11,6 +11,8 @@ RayGameCore::RayGameCore() // constructor
     PlayerLine[1].color = sf::Color::Green;
     ScannedMap.setViewport(sf::FloatRect(72.f / 200.f, 12.f / 150.f, 56.f / 200.f, 56.f / 150.f));
     ScannedMap.setSize(2000, 2000);
+    mainTexture.setView(sf::View(sf::Vector2f(400, 300), sf::Vector2f(800, 600)));
+    mainSprite = new sf::Sprite(mainTexture.getTexture());
 }
 
 int RayGameCore::Load()
@@ -18,7 +20,7 @@ int RayGameCore::Load()
     if (ui.onLoad())                  return 1001; // error loading ui
     if (map.loadFromFile("./map.te")) return 1002; // error loading map
     rad = Raydar(map.GetMap(), 5, 10);
-
+    return 0;
 }
 
 void RayGameCore::update(sf::Int32 dt)
@@ -138,20 +140,22 @@ void RayGameCore::windowEvents()
 void RayGameCore::render()
 {
     // render
-    mainWindow.clear();
-    mainWindow.setView(sf::View((sf::FloatRect)ui.primaryUI.getTextureRect()));
-    mainWindow.draw(ui);
-    mainWindow.setView(rad.RaydarView);
-    mainWindow.draw(rad);
-    mainWindow.draw(PlayerCircle);
-    mainWindow.draw(PlayerLine, 2, sf::Lines);
+    mainTexture.create(800,600);
+    mainTexture.clear();
+    mainTexture.setView(sf::View((sf::FloatRect)ui.primaryUI.getTextureRect()));
+    mainTexture.draw(ui);
+    mainTexture.setView(rad.RaydarView);
+    mainTexture.draw(rad);
+    mainTexture.draw(PlayerCircle);
+    mainTexture.draw(PlayerLine, 2, sf::Lines);
     // left 72 / 200,   right 128 / 200,
     // bottom 68 / 150, top 12 / 150
 
-    mainWindow.setView(ScannedMap);
+    mainTexture.setView(ScannedMap);
 
-    mainWindow.draw(rad);
-    mainWindow.draw(PlayerCircle);
-    mainWindow.draw(PlayerLine, 2, sf::Lines);
-    mainWindow.display();
+    mainTexture.draw(rad);
+    mainTexture.draw(PlayerCircle);
+    mainTexture.draw(PlayerLine, 2, sf::Lines);
+    mainTexture.display();
+    mainSprite = new sf::Sprite(mainTexture.getTexture());
 }
